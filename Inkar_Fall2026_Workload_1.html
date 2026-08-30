@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inkar — Fall 2026 Semester Workload</title>
+<style>
+  :root{
+    --asc200:#4C6EF5;
+    --biol120:#12B886;
+    --biol120l:#0CA678;
+    --ant290:#F76707;
+    --chem211:#9C36B5;
+    --chem211l:#E64980;
+    --bg:#f6f7fb;
+    --card:#ffffff;
+    --text:#1c1f27;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+    --warn:#c92a2a;
+    --warnbg:#fff5f5;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.45;
+  }
+  header{
+    background:#111827; color:#fff; padding:20px 24px;
+  }
+  header h1{margin:0 0 4px 0; font-size:22px;}
+  header p{margin:0; color:#cbd5e1; font-size:14px;}
+  nav{
+    display:flex; gap:4px; background:#fff; border-bottom:1px solid var(--border);
+    position:sticky; top:0; z-index:50; overflow-x:auto; padding:0 12px;
+  }
+  nav button{
+    border:none; background:transparent; padding:14px 16px; font-size:14px; cursor:pointer;
+    color:var(--muted); border-bottom:3px solid transparent; white-space:nowrap; font-weight:600;
+  }
+  nav button.active{ color:var(--text); border-bottom-color:#111827; }
+  main{ max-width:1100px; margin:0 auto; padding:20px 16px 80px; }
+  section.tab{ display:none; }
+  section.tab.active{ display:block; }
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin-bottom:16px; }
+  .key{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+  .key-item{ display:flex; align-items:center; gap:6px; font-size:13px; padding:5px 10px; border-radius:20px; background:#fff; border:1px solid var(--border); }
+  .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .course-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; }
+  .course-card{ border-radius:12px; border:1px solid var(--border); overflow:hidden; background:#fff; }
+  .course-head{ padding:12px 16px; color:#fff; font-weight:700; font-size:15px; }
+  .course-body{ padding:14px 16px; font-size:13.5px; }
+  .course-body h4{ margin:10px 0 4px 0; font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  .course-body table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:4px;}
+  .course-body td{ padding:3px 4px; border-bottom:1px solid #f1f1f4; }
+  .flag{ color:var(--warn); font-weight:700; }
+  .flagbox{ background:var(--warnbg); border:1px solid #ffc9c9; color:#a61e1e; padding:8px 10px; border-radius:8px; font-size:12.5px; margin-top:8px; }
+  table.data{ width:100%; border-collapse:collapse; background:#fff; }
+  table.data th{ text-align:left; font-size:12px; text-transform:uppercase; color:var(--muted); border-bottom:2px solid var(--border); padding:8px 6px; position:sticky; top:49px; background:#fff; }
+  table.data td{ padding:8px 6px; border-bottom:1px solid #f1f1f4; font-size:13.5px; vertical-align:top; }
+  table.data tr.done td{ color:#9ca3af; text-decoration:line-through; }
+  .pill{ display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:700; color:#fff; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+  .filters select, .filters input{ padding:6px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; }
+  .grade-course{ border:1px solid var(--border); border-radius:12px; margin-bottom:16px; overflow:hidden; }
+  .grade-course .gc-head{ padding:10px 16px; color:#fff; font-weight:700; display:flex; justify-content:space-between; align-items:center; }
+  .grade-course .gc-body{ padding:14px 16px; }
+  .comp-row{ display:grid; grid-template-columns: 1fr 90px 90px; gap:10px; align-items:center; padding:6px 0; border-bottom:1px solid #f1f1f4; font-size:13.5px; }
+  .comp-row input{ width:100%; padding:5px 6px; border:1px solid var(--border); border-radius:6px; }
+  .result-box{ margin-top:10px; padding:10px 12px; background:#f8f9fc; border-radius:8px; font-size:13.5px; }
+  .target-row{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13.5px; }
+  .target-row input{ width:70px; padding:5px 6px; border:1px solid var(--border); border-radius:6px; }
+  .study-table th, .study-table td{ text-align:left; padding:8px; border:1px solid var(--border); font-size:13px; vertical-align:top; }
+  .study-table{ border-collapse:collapse; width:100%; background:#fff; }
+  .study-block{ border-radius:6px; padding:6px 8px; font-size:12.5px; color:#fff; margin-bottom:4px; }
+  .fixed-block{ border-radius:6px; padding:6px 8px; font-size:12.5px; margin-bottom:4px; background:#e9ecef; color:#495057; font-style:italic; }
+  #syncStatus{ position:fixed; bottom:0; left:0; right:0; background:#111827; color:#fff; font-size:12px; padding:6px 14px; display:flex; justify-content:space-between; }
+  #syncStatus.err{ background:var(--warn); }
+  .small{ font-size:12px; color:var(--muted); }
+  .assumption{ background:#fff9db; border:1px solid #ffe066; padding:10px 14px; border-radius:8px; font-size:13px; margin-bottom:16px; }
+  checkbox-cell{display:block;}
+  input[type=checkbox]{ width:17px; height:17px; }
+  .cal-month{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:20px; }
+  .cal-month h3{ margin:0 0 10px 0; font-size:16px; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+  .cal-dow{ font-size:11px; text-transform:uppercase; color:var(--muted); text-align:center; font-weight:700; padding-bottom:2px; }
+  .cal-cell{ min-height:78px; border:1px solid #f0f0f2; border-radius:8px; padding:4px; background:#fbfbfd; }
+  .cal-cell.empty{ background:transparent; border:none; }
+  .cal-cell.break{ background:#f1f3f5; }
+  .cal-daynum{ font-size:11px; color:var(--muted); font-weight:700; margin-bottom:3px; }
+  .cal-chip{ display:flex; align-items:flex-start; gap:4px; background:#fff; border-radius:5px; padding:2px 4px; margin-bottom:3px; font-size:10.5px; line-height:1.25; cursor:pointer; border-left:4px solid transparent; }
+  .cal-chip input[type=checkbox]{ width:12px; height:12px; margin-top:1px; flex:none; }
+  .cal-chip.done{ opacity:.45; text-decoration:line-through; }
+  .cal-chip-course{ font-weight:700; }
+  @media (max-width:700px){
+    .cal-cell{ min-height:60px; }
+    .cal-chip{ font-size:9.5px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Inkar's Fall 2026 Workload — BA Biological Sciences, Nazarbayev University</h1>
+  <p>Term: 17 Aug – 27 Nov 2026 (Fall Break: 5–11 Oct, no class) · Timezone GMT+5 · 6 courses</p>
+</header>
+<nav id="tabnav">
+  <button data-tab="overview" class="active">Overview</button>
+  <button data-tab="courses">Courses</button>
+  <button data-tab="deadlines">Deadlines</button>
+  <button data-tab="readings">Readings</button>
+  <button data-tab="study">Study Blocks</button>
+  <button data-tab="grades">Grade Calculator</button>
+</nav>
+<main>
+
+<section class="tab active" id="tab-overview">
+  <div class="assumption">
+    <strong>Assumptions used (please double-check):</strong> No fixed weekly commitments were specified, so study blocks below only avoid your class times. Weekly study load is set to roughly 2 hours of prep per hour of class contact (a common rule of thumb, also suggested in your BIOL120L syllabus), spread across evenings/mornings — adjust freely, every block is just a suggestion.
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0;">Color key</h3>
+    <div class="key" id="colorKey"></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0;">⚠️ Flagged ambiguities / conflicts found in your syllabi</h3>
+    <ul id="flagList" style="font-size:13.5px; padding-left:18px;"></ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0;">Key term dates</h3>
+    <table class="data">
+      <tr><td>First day of class</td><td>Mon, 17 Aug 2026</td></tr>
+      <tr><td>Drop deadline (ASC200)</td><td>Wed, 26 Aug 2026</td></tr>
+      <tr><td>Add deadline (ASC200)</td><td>Fri, 28 Aug 2026</td></tr>
+      <tr><td>Fall Break — no class</td><td>Mon 5 Oct – Sun 11 Oct 2026</td></tr>
+      <tr><td>Withdrawal deadline</td><td>Wed, 14 Oct 2026</td></tr>
+      <tr><td>Last day of class</td><td>Fri, 27 Nov 2026</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="tab" id="tab-courses">
+  <div class="course-grid" id="courseGrid"></div>
+</section>
+
+<section class="tab" id="tab-deadlines">
+  <div class="filters">
+    <select id="deadlineCourseFilter"><option value="all">All courses</option></select>
+    <label class="small"><input type="checkbox" id="hideDone"> Hide completed</label>
+  </div>
+  <div id="deadlineCalendar"></div>
+</section>
+
+<section class="tab" id="tab-readings">
+  <div class="filters">
+    <select id="readingCourseFilter"><option value="all">All courses</option></select>
+    <label class="small"><input type="checkbox" id="hideDoneReadings"> Hide completed</label>
+  </div>
+  <div id="readingCalendar"></div>
+</section>
+
+<section class="tab" id="tab-study">
+  <div class="card">
+    <p class="small">Study blocks are timed to land before the class session they prep for, and avoid all your class meeting times. No other recurring weekly commitments were given to avoid — tell me yours and I'll rebuild this around them.</p>
+  </div>
+  <table class="study-table" id="studyTable"></table>
+</section>
+
+<section class="tab" id="tab-grades">
+  <div id="gradeCalcRoot"></div>
+</section>
+
+</main>
+<div id="syncStatus">
+  <span id="syncStatusText">Loading…</span>
+  <span class="small">Checklist &amp; grade data saved locally, syncs across your devices when online.</span>
+</div>
+
+<script>
+/* =========================================================
+   DATA MODEL
+   ========================================================= */
+const COURSES = [
+  {
+    id:"asc200", code:"ASC 200 (Sec 36L)", title:"Academic Writing, Science Communication & Media Literacy",
+    color:"var(--asc200)",
+    schedule:"Mon / Wed / Fri, 13:00–13:50", room:"8.327",
+    instructor:"Andrew G. Drybrough", email:"andrew.drybrough@nu.edu.kz",
+    officeHours:"Tue/Thu 15:00–17:00, Mon/Wed 16:00–17:00, or by scheduled appointment (Moodle)",
+    grading:[
+      {name:"Exam", weight:25, due:"2026-09-04"},
+      {name:"Speech", weight:20, due:"2026-09-25"},
+      {name:"Research Paper", weight:25, due:"2026-11-15"},
+      {name:"Visual Project", weight:20, due:"2026-11-29"},
+      {name:"Participation", weight:10, due:null}
+    ],
+    flags:["Days confirmed by you: Mon/Wed/Fri, 13:00–13:50.",
+           "Confirmed: there is no finals-period class or activity for ASC200.",
+           "Per your instruction, no reading-schedule rows are generated for ASC200 (its topic table doesn't map specific readings to sessions)."]
+  },
+  {
+    id:"biol120", code:"BIOL 120", title:"Modern Biology II",
+    color:"var(--biol120)",
+    schedule:"Mon / Wed / Fri, 12:00–12:50", room:"5.103",
+    instructor:"Alexandr Pak", email:"apak@nu.edu.kz",
+    officeHours:"TBA — syllabus lists office hours as \"TBA\"",
+    grading:[
+      {name:"Quiz 1", weight:15, due:"2026-09-07"},
+      {name:"Quiz 2", weight:15, due:"2026-09-23"},
+      {name:"Midterm", weight:20, due:"2026-10-19"},
+      {name:"Quiz 3", weight:15, due:"2026-11-16"},
+      {name:"Final Exam", weight:35, due:"2026-11-30", flagged:true}
+    ],
+    flags:["Final Exam date is listed only as \"TBA\" in the syllabus — used 30 Nov (finals week guess) as a placeholder; confirm the real date once posted.",
+           "Week 7 reading is listed as \"ECB: Chapter 12\", identical to Week 2's reading — likely a typo in the original syllabus (topic for Week 7 is signal transduction, not membrane transport), but kept as written."]
+  },
+  {
+    id:"biol120l", code:"BIOL 120L", title:"Modern Biology Lab II",
+    color:"var(--biol120l)",
+    schedule:"Tue, 15:00–17:50", room:"9.228",
+    instructor:"Zarina Sautbayeva", email:"zarina.sautbayeva@nu.edu.kz",
+    officeHours:"By appointment",
+    grading:[
+      {name:"Quizzes (10 × 3%)", weight:30, due:null},
+      {name:"Group Presentation", weight:20, due:"2026-09-29", flagged:true},
+      {name:"Lab Reports (GFP + Proteomics)", weight:45, due:"2026-11-22"},
+      {name:"Lab Notebook", weight:5, due:null}
+    ],
+    flags:["Section confirmed by you: Tuesday, 15:00–17:50.",
+           "Group Presentation date is listed only as \"Date TBA\" — placed on the Week 7 session date (29 Sep) as a best guess; confirm with instructor.",
+           "Lab Reports are 20%+25% = 45% combined in the syllabus table; shown here as one combined line."]
+  },
+  {
+    id:"ant290", code:"ANT 290", title:"Foundations in Cultural Heritage Studies",
+    color:"var(--ant290)",
+    schedule:"Tue / Thu, 12:00–13:15", room:"8.310",
+    instructor:"Dr. Katherine Erdman", email:"Katherine.Erdman@nu.edu.kz",
+    officeHours:"Tue 14:00–15:00, and by appointment",
+    grading:[
+      {name:"Syllabus Quiz (mandatory, ungraded)", weight:0, due:"2026-08-27"},
+      {name:"Astana Heritage Discovery", weight:20, due:"2026-09-24"},
+      {name:"Reassessing Heritage", weight:25, due:"2026-11-19"},
+      {name:"Exam #1", weight:25, due:"2026-09-17"},
+      {name:"Exam #2", weight:30, due:"2026-10-29"}
+    ],
+    flags:["No regular class on 22 October — students attend the HANSR conference instead.",
+           "Week 9 reading cites \"Meskell 2018, Ch. 6 & 7\" but the course text list only includes Meskell 2013 and Meskell 2020 — no 2018 entry exists in the reference list; likely a typo for one of those, kept as written."]
+  },
+  {
+    id:"chem211", code:"CHEM 211", title:"Organic Chemistry I (lecture)",
+    color:"var(--chem211)",
+    schedule:"Tue / Thu, 10:30–11:45", room:"⚠️ Not stated in syllabus",
+    instructor:"Dr. Ahmed Elkamhawy", email:"ahmed.elkamhawy@nu.edu.kz",
+    officeHours:"By appointment via email; Thu 13:15–15:15",
+    grading:[
+      {name:"Quizzes (2 × 10%)", weight:20, due:"2026-10-20"},
+      {name:"Midterms (2 × 20%)", weight:40, due:"2026-11-10"},
+      {name:"Final Exam", weight:40, due:"2026-11-30", flagged:true}
+    ],
+    flags:["Meeting days/time confirmed by you: Tue/Thu, 10:30–11:45. Room was never given in the slide deck and is still ⚠️ unconfirmed — please check with your instructor.",
+           "Final Exam date is \"TBA by the university\" — 30 Nov (finals week) used as a placeholder only."]
+  },
+  {
+    id:"chem211l", code:"CHEM 211L (Sec S3)", title:"Organic Chemistry I Lab",
+    color:"var(--chem211l)",
+    schedule:"Wed, 14:00–17:00", room:"7.307",
+    instructor:"Ozgur Oztopcu (Course Leader) / Ellina Mun", email:"ozgur.oztopcu@nu.edu.kz / ellina.mun@nu.edu.kz",
+    officeHours:"Not listed in syllabus",
+    grading:[
+      {name:"Lab Reports", weight:60, due:null, flagged:true},
+      {name:"Quizzes", weight:20, due:null, flagged:true},
+      {name:"Final Exam", weight:20, due:"2026-11-02", flagged:true}
+    ],
+    flags:["The course outline table stops at Week 10 (19 Oct) then jumps straight to a row simply labeled \"Nov 2, Final Exam\" — Weeks 11, 13, 14 and 15 have no listed experiments at all, despite the course running to 27 Nov.",
+           "Direct contradiction: the schedule table gives the Final Exam date as \"Nov 2\", while the separate Summative Assessments table (#10) lists the Final Exam date as \"TBD\". Nov 2 is used below as the best guess, but this should be confirmed.",
+           "Nov 2, 2026 is a Monday, not a Wednesday (your section's meeting day) — another sign this date may be a template leftover rather than section-specific.",
+           "Lab Report and Quiz due dates are listed only as \"TBD\" for the whole course — best-guess weekly dates were assigned below (quiz = same day as each lab session; report = the following Wed), clearly flagged in the Deadlines/Readings tables."]
+  }
+];
+
+// Deadlines: {course, name, date, weight, flagged, note}
+const DEADLINES = [
+  {course:"ant290", name:"Syllabus Quiz (mandatory, ungraded)", date:"2026-08-27", weight:"required", note:""},
+  {course:"asc200", name:"Exam", date:"2026-09-04", weight:"25%", note:""},
+  {course:"chem211", name:"Quiz 1", date:"2026-09-01", weight:"10%", note:""},
+  {course:"biol120l", name:"Quiz 1 (pre-lab)", date:"2026-08-25", weight:"3%", note:"⚠️ best guess — dated to lab session"},
+  {course:"ant290", name:"Astana Heritage Discovery — Topic", date:"2026-09-03", weight:"—", note:"part of the 20% AHD project"},
+  {course:"biol120l", name:"Quiz 2 (pre-lab)", date:"2026-09-01", weight:"3%", note:"⚠️ best guess"},
+  {course:"chem211l", name:"Lab Report 1 (Recrystallization)", date:"2026-09-02", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"biol120", name:"Quiz 1", date:"2026-09-07", weight:"15%", note:""},
+  {course:"chem211l", name:"Quiz (pre-lab, wk2)", date:"2026-09-09", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"chem211l", name:"Lab Report 2 (Extraction of Caffeine)", date:"2026-09-09", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"biol120l", name:"Quiz 3 (pre-lab)", date:"2026-09-08", weight:"3%", note:"⚠️ best guess"},
+  {course:"ant290", name:"Exam #1 (Weeks 1–5)", date:"2026-09-17", weight:"25%", note:""},
+  {course:"biol120l", name:"Quiz 4 (pre-lab)", date:"2026-09-15", weight:"3%", note:"⚠️ best guess"},
+  {course:"chem211l", name:"Quiz (pre-lab, wk3)", date:"2026-09-16", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"chem211l", name:"Lab Report 3 (Fractional Distillation)", date:"2026-09-16", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"chem211", name:"Midterm 1 (Ch 1–5)", date:"2026-09-22", weight:"20%", note:""},
+  {course:"asc200", name:"Speech (first group: Mon/Wed/Fri)", date:"2026-09-25", weight:"20%", note:"delivered 21/23/25 Sep"},
+  {course:"biol120", name:"Quiz 2", date:"2026-09-23", weight:"15%", note:""},
+  {course:"biol120l", name:"Quiz 5 (pre-lab)", date:"2026-09-22", weight:"3%", note:"⚠️ best guess"},
+  {course:"ant290", name:"Astana Heritage Discovery Project (final)", date:"2026-09-24", weight:"20%", note:""},
+  {course:"chem211l", name:"Quiz (pre-lab, wk4)", date:"2026-09-23", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"chem211l", name:"Lab Report 4 (Gas Chromatography)", date:"2026-09-23", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"asc200", name:"Speech (second group: Mon/Wed/Fri)", date:"2026-10-02", weight:"20%", note:"delivered 28/30 Sep, 2 Oct"},
+  {course:"biol120l", name:"Group Presentation (Enzymes)", date:"2026-09-29", weight:"20%", note:"⚠️ TBA in syllabus — best guess"},
+  {course:"chem211l", name:"Quiz (pre-lab, wk5)", date:"2026-09-30", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"chem211l", name:"Lab Report 5 (TLC)", date:"2026-09-30", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"biol120l", name:"GFP Lab Report", date:"2026-10-18", weight:"20%", note:"11:59 PM"},
+  {course:"chem211", name:"Quiz 2", date:"2026-10-20", weight:"10%", note:""},
+  {course:"biol120", name:"Midterm", date:"2026-10-19", weight:"20%", note:""},
+  {course:"chem211l", name:"Quiz (pre-lab, wk9)", date:"2026-10-14", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"chem211l", name:"Lab Report 6 (Separation of Carvone/Limonene)", date:"2026-10-14", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"biol120l", name:"Quiz 6 (pre-lab)", date:"2026-10-20", weight:"3%", note:"⚠️ best guess"},
+  {course:"ant290", name:"Exam #2 (Weeks 6–11)", date:"2026-10-29", weight:"30%", note:""},
+  {course:"biol120l", name:"Quiz 7 (pre-lab)", date:"2026-10-27", weight:"3%", note:"⚠️ best guess"},
+  {course:"chem211l", name:"Quiz (pre-lab, wk10)", date:"2026-10-21", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"chem211l", name:"Lab Report 7 (Dehydration of methylcyclohexanols)", date:"2026-10-21", weight:"⚠️ TBD", note:"⚠️ best-guess date"},
+  {course:"chem211l", name:"Lab Report 8 (Synthesis of 2-chloro-2-methylbutane)", date:"2026-10-28", weight:"⚠️ TBD", note:"⚠️ best-guess — no next lab day is documented in the syllabus after Week 10"},
+  {course:"chem211l", name:"Final Exam", date:"2026-11-02", weight:"20%", note:"⚠️ contradicts \"TBD\" in assessments table — see flags"},
+  {course:"biol120l", name:"Quiz 8 (pre-lab)", date:"2026-11-03", weight:"3%", note:"⚠️ best guess"},
+  {course:"chem211", name:"Midterm 2 (Ch 6–11)", date:"2026-11-10", weight:"20%", note:""},
+  {course:"biol120l", name:"Quiz 9 (pre-lab)", date:"2026-11-10", weight:"3%", note:"⚠️ best guess"},
+  {course:"biol120", name:"Quiz 3", date:"2026-11-16", weight:"15%", note:""},
+  {course:"ant290", name:"Reassessing Heritage", date:"2026-11-19", weight:"25%", note:""},
+  {course:"biol120l", name:"Proteomics Lab Report", date:"2026-11-22", weight:"25%", note:"11:59 PM"},
+  {course:"biol120l", name:"Quiz 10 (pre-lab)", date:"2026-11-24", weight:"3%", note:"⚠️ best guess"},
+  {course:"asc200", name:"Research Paper", date:"2026-11-15", weight:"25%", note:"11:59 PM"},
+  {course:"asc200", name:"Visual Project", date:"2026-11-29", weight:"20%", note:"11:59 PM"},
+  {course:"biol120", name:"Final Exam", date:"2026-11-30", weight:"35%", note:"⚠️ syllabus says \"TBA\" — placeholder date"},
+  {course:"chem211", name:"Final Exam", date:"2026-11-30", weight:"40%", note:"⚠️ syllabus says \"TBA by the university\" — placeholder date"}
+];
+
+// Readings mapped to session date
+const READINGS = [
+  // BIOL 120 (lecture)
+  {course:"biol120", date:"2026-08-17", text:"ECB Ch. 11; BWC Ch. 7 — Membranes"},
+  {course:"biol120", date:"2026-08-24", text:"ECB Ch. 12; BWC Ch. 8 — Transport across membranes"},
+  {course:"biol120", date:"2026-08-31", text:"ECB Ch. 13; BWC Ch. 9 — Glycolysis & fermentation"},
+  {course:"biol120", date:"2026-09-07", text:"ECB Ch. 13–14; BWC Ch. 10 — Aerobic respiration"},
+  {course:"biol120", date:"2026-09-14", text:"ECB Ch. 14; BWC Ch. 11 — Photosynthesis"},
+  {course:"biol120", date:"2026-09-21", text:"ECB Ch. 15; BWC Ch. 12 — Endomembrane system"},
+  {course:"biol120", date:"2026-09-28", text:"⚠️ ECB Ch. 12 (as listed — duplicates Week 2); BWC Ch. 13 — Signal transduction (neurons)"},
+  {course:"biol120", date:"2026-10-12", text:"ECB Ch. 16; BWC Ch. 14 — Messengers & receptors"},
+  {course:"biol120", date:"2026-10-19", text:"ECB Ch. 17; BWC Ch. 15 — Cytoskeleton"},
+  {course:"biol120", date:"2026-10-26", text:"ECB Ch. 17, 20; BWC Ch. 16–17 — Motility, adhesion"},
+  {course:"biol120", date:"2026-11-02", text:"ECB Ch. 20; BWC Ch. 17 — Cell adhesion (cont.)"},
+  {course:"biol120", date:"2026-11-09", text:"ECB Ch. 18 — Cell-division cycle"},
+  {course:"biol120", date:"2026-11-16", text:"ECB Ch. 19 — Meiosis"},
+  {course:"biol120", date:"2026-11-23", text:"ECB Ch. 20 — Tissue maintenance, stem cells, cancer"},
+  // BIOL 120L (Tuesday section)
+  {course:"biol120l", date:"2026-08-18", text:"Lab 1 manual — Intro & safety, protein structure"},
+  {course:"biol120l", date:"2026-08-25", text:"Lab 2 manual — pGlo Transformation"},
+  {course:"biol120l", date:"2026-09-01", text:"Lab 3 manual — Transformation efficiency, GFP expression"},
+  {course:"biol120l", date:"2026-09-08", text:"Lab 4 manual — GFP Protein Purification"},
+  {course:"biol120l", date:"2026-09-15", text:"Lab 5 manual — Enzymes Part 1"},
+  {course:"biol120l", date:"2026-09-22", text:"Lab 6 manual — Enzymes Part 2"},
+  {course:"biol120l", date:"2026-09-29", text:"Group presentation prep — Enzymes I & II"},
+  {course:"biol120l", date:"2026-10-13", text:"Review for GFP report (due Sun 18 Oct)"},
+  {course:"biol120l", date:"2026-10-20", text:"Lab 7 manual — Proteomics Pt.1 (extraction, Bradford assay)"},
+  {course:"biol120l", date:"2026-10-27", text:"Lab 8 manual — Proteomics Pt.2 (SDS-PAGE)"},
+  {course:"biol120l", date:"2026-11-03", text:"Lab 9 manual — Proteomics Pt.3 (Western blotting)"},
+  {course:"biol120l", date:"2026-11-10", text:"Lab 10 manual — Proteomics Pt.4 (Immunodetection)"},
+  {course:"biol120l", date:"2026-11-17", text:"Lab report review; Proteomics report due Sun 22 Nov"},
+  {course:"biol120l", date:"2026-11-24", text:"Lab 11 manual — ELISA"},
+  // ANT 290
+  {course:"ant290", date:"2026-08-18", text:"Harrison 2013, Ch. 1 & 2 — What is Heritage? (Case: Stonehenge)"},
+  {course:"ant290", date:"2026-08-25", text:"Harrison 2013, Ch. 3 & 4 — Origins of Heritage Studies (post-war Europe)"},
+  {course:"ant290", date:"2026-09-01", text:"UNESCO World Heritage Convention (1972); Meskell 2013 (Case: Giza, Bamiyan Buddhas)"},
+  {course:"ant290", date:"2026-09-08", text:"UNESCO ICH Convention (2003); Kirshenblatt-Gimblett 2004 (Case: Washoku, Kazakh Küy)"},
+  {course:"ant290", date:"2026-09-15", text:"Taylor & Lennon 2011; Koch & Gillespie 2024 (Case: Uluru, Charyn Canyon)"},
+  {course:"ant290", date:"2026-09-22", text:"Harrison 2013, Ch. 7; Graham, Ashworth & Tunbridge 2000, Ch. 2 (Case: Belfast murals)"},
+  {course:"ant290", date:"2026-09-29", text:"Harrison 2013, Ch. 9; Light 2015 (Case: Machu Picchu, Bukhara)"},
+  {course:"ant290", date:"2026-10-13", text:"⚠️ \"Meskell 2018\" Ch. 6–7 (not in reference list — likely 2013/2020); UNESCO Climate Action docs; Holtorf 2020 (Case: Palmyra, Venice)"},
+  {course:"ant290", date:"2026-10-20", text:"Lonetree 2012 excerpts; de Jong 2022 excerpts (Case: Benin Bronzes, Māori repatriation) — no regular class 22 Oct (HANSR conference instead)"},
+  {course:"ant290", date:"2026-10-27", text:"Neal 2015; Zhang 2025 (Case: Europeana, Mosul 3D)"},
+  {course:"ant290", date:"2026-11-03", text:"Waterton, Watson & Silverman 2017; Wray 2011 (Case: District Six Museum)"},
+  {course:"ant290", date:"2026-11-10", text:"Blake 2015, Ch. 1; Venice Charter 1964; UNESCO Nara Document 1994"},
+  {course:"ant290", date:"2026-11-17", text:"Harrison 2013, Ch. 10 — The Future of Heritage"},
+  {course:"ant290", date:"2026-11-24", text:"Smith 2020, Ch. 11 — Student Heritage Forum"},
+  // CHEM 211 (lecture, Tue/Thu 10:30–11:45) — Klein Organic Chemistry chapters, due by the Tuesday session of that week
+  {course:"chem211", date:"2026-08-18", text:"Klein Ch. 1 — Review of General Principles"},
+  {course:"chem211", date:"2026-08-25", text:"Klein Ch. 2 — Molecular Representations"},
+  {course:"chem211", date:"2026-09-01", text:"Klein Ch. 3 — Acids and Bases (Quiz 1 this week)"},
+  {course:"chem211", date:"2026-09-08", text:"Klein Ch. 4 — Alkanes and Cycloalkanes"},
+  {course:"chem211", date:"2026-09-15", text:"Klein Ch. 5 — Stereoisomerism"},
+  {course:"chem211", date:"2026-09-22", text:"Klein Ch. 6 — Chemical Reactivity and Mechanisms (Midterm 1 this week)"},
+  {course:"chem211", date:"2026-09-29", text:"Klein Ch. 7 — Alkyl Halides: Substitution & Elimination"},
+  {course:"chem211", date:"2026-10-13", text:"Klein Ch. 8 — Addition Reactions and Alkenes"},
+  {course:"chem211", date:"2026-10-20", text:"Klein Ch. 9 — Alkynes (Quiz 2 this week)"},
+  {course:"chem211", date:"2026-10-27", text:"Klein Ch. 10 — Radical Reactions"},
+  {course:"chem211", date:"2026-11-03", text:"Klein Ch. 11 — Synthesis"},
+  {course:"chem211", date:"2026-11-10", text:"Klein Ch. 12 — Alcohols and Phenols (Midterm 2 this week)"},
+  {course:"chem211", date:"2026-11-17", text:"Klein Ch. 13 — Ethers, Epoxides, Thiols, Sulfides"},
+  {course:"chem211", date:"2026-11-24", text:"Revision & Final Exam prep"},
+  // CHEM 211L (Wed section)
+  {course:"chem211l", date:"2026-08-19", text:"Palleros Unit 1 (1.1–1.3), Unit 2 (2.2–2.4, 2.9–2.10), Unit 3 — Intro & Safety"},
+  {course:"chem211l", date:"2026-08-26", text:"Palleros Unit 4, E4.1 & E4.3 — Recrystallization of Acetanilide"},
+  {course:"chem211l", date:"2026-09-02", text:"Palleros Unit 5, E5.3–E5.5 — Extraction of Caffeine"},
+  {course:"chem211l", date:"2026-09-09", text:"Palleros Unit 6, E6A.1–4 — Fractional Distillation"},
+  {course:"chem211l", date:"2026-09-16", text:"Palleros Unit 7, E7A.1 — Gas Chromatography of Alcohols"},
+  {course:"chem211l", date:"2026-09-23", text:"Palleros Unit 8, E8.2 — TLC (Isolation & Analysis)"},
+  {course:"chem211l", date:"2026-09-30", text:"Palleros Unit 11 (E11B.3), Unit 9 — Separation of Carvone & Limonene"},
+  {course:"chem211l", date:"2026-10-14", text:"Palleros Unit 12, E12.2–3 — Dehydration of methylcyclohexanols"},
+  {course:"chem211l", date:"2026-10-21", text:"Palleros Unit 13, E13.2–3 — Synthesis of 2-chloro-2-methylbutane"},
+  {course:"chem211l", date:"2026-11-04", text:"⚠️ No content listed in syllabus for this session — schedule ends at Week 10; confirm with instructor"},
+  {course:"chem211l", date:"2026-11-11", text:"⚠️ No content listed in syllabus for this session"},
+  {course:"chem211l", date:"2026-11-18", text:"⚠️ No content listed in syllabus for this session"},
+  {course:"chem211l", date:"2026-11-25", text:"⚠️ No content listed in syllabus for this session"}
+];
+
+// Weekly study block plan (illustrative week, repeats with date shifted each week in practice)
+// Each block: day, time, label, courseId (or null for a general/fixed block)
+const STUDY_BLOCKS = [
+  {day:"Sun", time:"18:00–19:30", course:"biol120l", label:"BIOL120L manual read + pre-lab quiz prep (preps Tue lab)"},
+  {day:"Sun", time:"19:30–21:00", course:"chem211", label:"CHEM211 reading (preps Tue class)"},
+  {day:"Mon", time:"09:00–10:00", course:"asc200", label:"ASC200 prep (before 13:00 class)"},
+  {day:"Mon", time:"19:00–20:30", course:"biol120", label:"BIOL120 reading (preps Wed class)"},
+  {day:"Tue", time:"08:30–09:30", course:"chem211", label:"CHEM211 review (before 10:30 class)"},
+  {day:"Tue", time:"19:00–20:30", course:"ant290", label:"ANT290 reading (preps Thu class)"},
+  {day:"Wed", time:"09:00–10:00", course:"asc200", label:"ASC200 prep (before 13:00 class)"},
+  {day:"Wed", time:"19:00–20:30", course:"chem211l", label:"CHEM211L manual read + pre-lab quiz prep (this week's lab)"},
+  {day:"Thu", time:"08:30–09:30", course:"chem211", label:"CHEM211 review (before 10:30 class)"},
+  {day:"Thu", time:"19:00–20:30", course:"chem211l", label:"CHEM211L lab report writing"},
+  {day:"Fri", time:"09:00–10:00", course:"asc200", label:"ASC200 prep (before 13:00 class)"},
+  {day:"Fri", time:"19:00–20:30", course:"biol120", label:"BIOL120 reading (preps Mon class)"},
+  {day:"Sat", time:"10:00–12:00", course:"chem211", label:"CHEM211 problem sets / chapter catch-up"},
+  {day:"Sat", time:"14:00–15:30", course:"ant290", label:"ANT290 project work (AHDP / Reassessing Heritage)"}
+];
+
+const COURSE_MAP = Object.fromEntries(COURSES.map(c=>[c.id,c]));
+function courseColor(id){ return COURSE_MAP[id] ? COURSE_MAP[id].color : "#999"; }
+function courseCode(id){ return COURSE_MAP[id] ? COURSE_MAP[id].code : id; }
+function fmtDate(iso){
+  if(!iso) return "—";
+  const d = new Date(iso+"T00:00:00");
+  return d.toLocaleDateString("en-GB",{weekday:"short", day:"numeric", month:"short", year:"numeric"});
+}
+
+/* =========================================================
+   STATE (localStorage + optional Firebase sync)
+   ========================================================= */
+const STATE = { checklist:{}, grades:{} };
+
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem("workloadState");
+    if(raw){
+      const parsed = JSON.parse(raw);
+      STATE.checklist = parsed.checklist || {};
+      STATE.grades = parsed.grades || {};
+    }
+  }catch(e){ console.error("localStorage load failed", e); }
+}
+function saveLocal(){
+  try{
+    localStorage.setItem("workloadState", JSON.stringify(STATE));
+  }catch(e){ console.error("localStorage save failed", e); setSyncStatus("Local save failed: "+e.message, true); }
+}
+
+/* ---- Firebase (optional cross-device sync) ---- */
+const firebaseConfig = {
+  apiKey: "AIzaSyDaaoA055Tai0icVYQ5cU4Ln9AhHj3C8HU",
+  authDomain: "university-11111.firebaseapp.com",
+  projectId: "university-11111",
+  storageBucket: "university-11111.firebasestorage.app",
+  messagingSenderId: "118445159532",
+  appId: "1:118445159532:web:e3549962dc8032e973d449"
+};
+let fbDb = null;
+let fbAvailable = false;
+
+function setSyncStatus(msg, isErr){
+  const el = document.getElementById("syncStatusText");
+  const box = document.getElementById("syncStatus");
+  el.textContent = msg;
+  box.classList.toggle("err", !!isErr);
+}
+
+function keyId(raw){ return String(raw).replace(/[.#$\[\]\/]/g, "_"); }
+
+function initFirebase(){
+  try{
+    if(typeof firebase === "undefined"){
+      setSyncStatus("Offline mode — Firebase SDK didn't load, using this browser's local storage only.", true);
+      return;
+    }
+    firebase.initializeApp(firebaseConfig);
+    fbDb = firebase.database();
+    fbAvailable = true;
+    setSyncStatus("Connecting to sync…", false);
+
+    // Listen per-key, never treat "absent from a message" as "clear this item".
+    const checklistRef = fbDb.ref("checklist");
+    checklistRef.on("child_added", snap => { STATE.checklist[keyId(snap.key)] = snap.val(); saveLocal(); renderAll(); });
+    checklistRef.on("child_changed", snap => { STATE.checklist[keyId(snap.key)] = snap.val(); saveLocal(); renderAll(); });
+    // Deliberately do NOT listen to child_removed as "uncheck" — unchecking writes false explicitly, it never deletes.
+
+    const gradesRef = fbDb.ref("grades");
+    gradesRef.on("child_added", snap => { STATE.grades[keyId(snap.key)] = snap.val(); saveLocal(); renderGrades(); });
+    gradesRef.on("child_changed", snap => { STATE.grades[keyId(snap.key)] = snap.val(); saveLocal(); renderGrades(); });
+
+    checklistRef.once("value")
+      .then(()=> { setSyncStatus("Synced across devices ✓", false); })
+      .catch(err=>{ setSyncStatus("Sync error: "+err.message, true); });
+
+  }catch(e){
+    console.error(e);
+    setSyncStatus("Sync unavailable: "+e.message+" (using local storage only)", true);
+  }
+}
+
+function writeChecklist(key, value){
+  const k = keyId(key);
+  STATE.checklist[k] = value;
+  saveLocal();
+  if(fbAvailable && fbDb){
+    fbDb.ref("checklist/"+k).set(value).catch(err=>{
+      setSyncStatus("⚠️ Sync write failed for "+k+": "+err.message, true);
+    });
+  }
+}
+function writeGrade(key, value){
+  const k = keyId(key);
+  STATE.grades[k] = value;
+  saveLocal();
+  if(fbAvailable && fbDb){
+    fbDb.ref("grades/"+k).set(value).catch(err=>{
+      setSyncStatus("⚠️ Sync write failed for "+k+": "+err.message, true);
+    });
+  }
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function renderColorKey(){
+  const el = document.getElementById("colorKey");
+  el.innerHTML = COURSES.map(c=>`<span class="key-item"><span class="dot" style="background:${c.color}"></span>${c.code}</span>`).join("");
+}
+
+function renderFlags(){
+  const el = document.getElementById("flagList");
+  let items = [];
+  COURSES.forEach(c=> c.flags.forEach(f=> items.push(`<li><strong>${c.code}:</strong> ${f}</li>`)));
+  el.innerHTML = items.join("");
+}
+
+function renderCourses(){
+  const el = document.getElementById("courseGrid");
+  el.innerHTML = COURSES.map(c=>`
+    <div class="course-card">
+      <div class="course-head" style="background:${c.color}">${c.code} — ${c.title}</div>
+      <div class="course-body">
+        <h4>Schedule</h4>
+        <div>${c.schedule}${c.schedule.includes('⚠️')?'':''}</div>
+        <div class="small">Room: ${c.room}</div>
+        <h4>Instructor</h4>
+        <div>${c.instructor}</div>
+        <div class="small">${c.email}</div>
+        <div class="small">Office hours: ${c.officeHours}</div>
+        <h4>Grading breakdown</h4>
+        <table>
+          ${c.grading.map(g=>`<tr><td>${g.name}</td><td style="text-align:right">${g.weight}%</td><td class="small">${g.due?fmtDate(g.due):''}${g.flagged?' <span class="flag">⚠️</span>':''}</td></tr>`).join("")}
+        </table>
+        ${c.flags.length? `<div class="flagbox"><strong>⚠️ Flagged:</strong><ul style="margin:4px 0 0 16px; padding:0;">${c.flags.map(f=>`<li>${f}</li>`).join("")}</ul></div>` : ""}
+      </div>
+    </div>
+  `).join("");
+}
+
+function populateFilterOptions(){
+  ["deadlineCourseFilter","readingCourseFilter"].forEach(id=>{
+    const el = document.getElementById(id);
+    COURSES.forEach(c=>{
+      const opt = document.createElement("option");
+      opt.value = c.id; opt.textContent = c.code;
+      el.appendChild(opt);
+    });
+  });
+}
+
+function slugify(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+
+const CAL_MONTHS = [[2026,7,"August 2026"],[2026,8,"September 2026"],[2026,9,"October 2026"],[2026,10,"November 2026"]];
+const BREAK_DATES = new Set(Array.from({length:7}, (_,i)=> `2026-10-${String(5+i).padStart(2,'0')}`));
+
+function renderCalendarSection(containerId, items, keyPrefix, filterId, hideDoneId, textField, rerenderFn){
+  const filter = document.getElementById(filterId).value;
+  const hideDone = document.getElementById(hideDoneId).checked;
+  const container = document.getElementById(containerId);
+  const byDate = {};
+  items.filter(it=> filter==="all" || it.course===filter).forEach(it=>{
+    const key = keyPrefix+"_"+it.course+"_"+it.date+"_"+slugify(it.name || it.text);
+    const checked = !!STATE.checklist[keyId(key)];
+    if(hideDone && checked) return;
+    (byDate[it.date] = byDate[it.date] || []).push({...it, key, checked});
+  });
+
+  let html = "";
+  CAL_MONTHS.forEach(([y,m,label])=>{
+    const dim = new Date(y, m+1, 0).getDate();
+    const lead = (new Date(y,m,1).getDay()+6)%7;
+    html += `<div class="cal-month"><h3>${label}</h3><div class="cal-grid">`;
+    ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(d=> html += `<div class="cal-dow">${d}</div>`);
+    for(let i=0;i<lead;i++) html += `<div class="cal-cell empty"></div>`;
+    for(let day=1; day<=dim; day++){
+      const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const isBreak = BREAK_DATES.has(iso);
+      const dayItems = byDate[iso] || [];
+      const chips = dayItems.map(it=>{
+        const text = textField==="name" ? it.name : it.text;
+        const extra = (textField==="name" && it.weight) ? ` (${it.weight})` : "";
+        const flagged = (it.note && it.note.includes("⚠️")) || text.includes("⚠️");
+        return `<label class="cal-chip ${it.checked?'done':''}" style="border-left-color:${courseColor(it.course)}" title="${(text+extra+(it.note?(' — '+it.note):'')).replace(/"/g,'&quot;')}">
+          <input type="checkbox" ${it.checked?"checked":""} data-key="${it.key}">
+          <span><span class="cal-chip-course">${courseCode(it.course)}${flagged?' ⚠️':''}:</span> ${text}${extra}</span>
+        </label>`;
+      }).join("");
+      html += `<div class="cal-cell${isBreak?' break':''}"><div class="cal-daynum">${day}</div>${chips}</div>`;
+    }
+    const trailing = (7 - ((lead+dim) % 7)) % 7;
+    for(let i=0;i<trailing;i++) html += `<div class="cal-cell empty"></div>`;
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+  container.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+    cb.addEventListener("change", e=>{
+      writeChecklist(e.target.dataset.key, e.target.checked);
+      rerenderFn();
+    });
+  });
+}
+
+function renderDeadlines(){
+  renderCalendarSection("deadlineCalendar", DEADLINES, "deadline", "deadlineCourseFilter", "hideDone", "name", renderDeadlines);
+}
+
+function renderReadings(){
+  renderCalendarSection("readingCalendar", READINGS, "reading", "readingCourseFilter", "hideDoneReadings", "text", renderReadings);
+}
+
+function renderStudy(){
+  const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const table = document.getElementById("studyTable");
+  let html = "<tr>"+days.map(d=>`<th>${d}</th>`).join("")+"</tr><tr>";
+  // class-time fixed blocks per day (for context)
+  const classBlocks = {
+    Mon:["ASC200 13:00–13:50","BIOL120 12:00–12:50"],
+    Tue:["CHEM211 10:30–11:45","ANT290 12:00–13:15","BIOL120L 15:00–17:50"],
+    Wed:["ASC200 13:00–13:50","BIOL120 12:00–12:50","CHEM211L 14:00–17:00"],
+    Thu:["CHEM211 10:30–11:45","ANT290 12:00–13:15"],
+    Fri:["ASC200 13:00–13:50","BIOL120 12:00–12:50"],
+    Sat:[], Sun:[]
+  };
+  days.forEach(d=>{
+    const blocks = STUDY_BLOCKS.filter(b=>b.day===d);
+    let cell = classBlocks[d].map(c=>`<div class="fixed-block">🎓 ${c}</div>`).join("");
+    cell += blocks.map(b=>`<div class="study-block" style="background:${courseColor(b.course)}">${b.time}<br>${b.label}</div>`).join("");
+    html += `<td>${cell||'<span class="small">—</span>'}</td>`;
+  });
+  html += "</tr>";
+  table.innerHTML = html;
+}
+
+function renderGrades(){
+  const root = document.getElementById("gradeCalcRoot");
+  root.innerHTML = COURSES.map(c=>{
+    const targetKey = "target_"+c.id;
+    const target = STATE.grades[keyId(targetKey)] ?? 90;
+    return `
+    <div class="grade-course" data-course="${c.id}">
+      <div class="gc-head" style="background:${c.color}"><span>${c.code}</span></div>
+      <div class="gc-body">
+        <div class="comp-row" style="font-weight:700; border-bottom:2px solid #eee;">
+          <div>Component</div><div>Weight %</div><div>Your score</div>
+        </div>
+        ${c.grading.map((g,i)=>{
+          const gk = "score_"+c.id+"_"+i;
+          const val = STATE.grades[keyId(gk)];
+          return `<div class="comp-row">
+            <div>${g.name}</div>
+            <div>${g.weight}%</div>
+            <div><input type="number" min="0" max="100" step="0.1" placeholder="—" value="${val!==undefined?val:''}" data-gradekey="${gk}" data-course="${c.id}"></div>
+          </div>`;
+        }).join("")}
+        <div class="target-row">
+          Target final grade: <input type="number" min="0" max="100" step="0.1" value="${target}" data-targetkey="${targetKey}" data-course="${c.id}"> %
+        </div>
+        <div class="result-box" id="result-${c.id}"></div>
+      </div>
+    </div>`;
+  }).join("");
+
+  root.querySelectorAll("input[data-gradekey]").forEach(inp=>{
+    inp.addEventListener("input", e=>{
+      const v = e.target.value === "" ? null : parseFloat(e.target.value);
+      if(v===null){ writeGrade(e.target.dataset.gradekey, null); }
+      else{ writeGrade(e.target.dataset.gradekey, v); }
+      computeGrade(e.target.dataset.course);
+    });
+  });
+  root.querySelectorAll("input[data-targetkey]").forEach(inp=>{
+    inp.addEventListener("input", e=>{
+      writeGrade(e.target.dataset.targetkey, parseFloat(e.target.value));
+      computeGrade(e.target.dataset.course);
+    });
+  });
+  COURSES.forEach(c=> computeGrade(c.id));
+}
+
+function computeGrade(courseId){
+  const c = COURSE_MAP[courseId];
+  const box = document.getElementById("result-"+courseId);
+  if(!box) return;
+  let enteredWeight = 0, earnedPoints = 0, totalWeight = 0;
+  c.grading.forEach((g,i)=>{
+    totalWeight += g.weight;
+    const v = STATE.grades[keyId("score_"+courseId+"_"+i)];
+    if(v !== undefined && v !== null && !isNaN(v)){
+      enteredWeight += g.weight;
+      earnedPoints += (v/100)*g.weight;
+    }
+  });
+  const remainingWeight = totalWeight - enteredWeight;
+  const currentGrade = enteredWeight>0 ? (earnedPoints/enteredWeight*100) : null;
+  const target = STATE.grades[keyId("target_"+courseId)] ?? 90;
+
+  let html = "";
+  if(enteredWeight===0){
+    html = `Enter scores as they come in to see your running grade.`;
+  } else {
+    html += `<strong>Current weighted average (on ${enteredWeight}% graded so far):</strong> ${currentGrade.toFixed(1)}%<br>`;
+    if(remainingWeight>0){
+      const neededTotalPoints = target - earnedPoints;
+      const neededAvgOnRemaining = (neededTotalPoints/remainingWeight)*100;
+      if(neededAvgOnRemaining <= 0){
+        html += `You've already secured a ${target}% or better — remaining ${remainingWeight}% can average as low as 0% (though obviously don't aim for that!).`;
+      } else if(neededAvgOnRemaining > 100){
+        html += `⚠️ Reaching ${target}% is no longer mathematically possible — you'd need ${neededAvgOnRemaining.toFixed(1)}% on the remaining ${remainingWeight}%.`;
+      } else {
+        html += `To reach <strong>${target}%</strong> overall, you need to average <strong>${neededAvgOnRemaining.toFixed(1)}%</strong> on the remaining ${remainingWeight}% of the course.`;
+      }
+    } else {
+      html += `All components entered — your final grade is <strong>${currentGrade.toFixed(1)}%</strong>.`;
+    }
+  }
+  box.innerHTML = html;
+}
+
+function renderAll(){
+  renderColorKey();
+  renderFlags();
+  renderCourses();
+  renderDeadlines();
+  renderReadings();
+  renderStudy();
+  renderGrades();
+}
+
+/* =========================================================
+   TABS + INIT
+   ========================================================= */
+document.getElementById("tabnav").addEventListener("click", e=>{
+  if(e.target.tagName!=="BUTTON") return;
+  document.querySelectorAll("#tabnav button").forEach(b=>b.classList.remove("active"));
+  e.target.classList.add("active");
+  const tab = e.target.dataset.tab;
+  document.querySelectorAll("section.tab").forEach(s=>s.classList.remove("active"));
+  document.getElementById("tab-"+tab).classList.add("active");
+});
+
+document.getElementById("deadlineCourseFilter").addEventListener("change", renderDeadlines);
+document.getElementById("hideDone").addEventListener("change", renderDeadlines);
+document.getElementById("readingCourseFilter").addEventListener("change", renderReadings);
+document.getElementById("hideDoneReadings").addEventListener("change", renderReadings);
+
+loadLocal();
+populateFilterOptions();
+renderAll();
+setSyncStatus("Loading sync…", false);
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" onerror="setSyncStatus('Offline — Firebase script failed to load, using local storage only.', true)"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" onerror="setSyncStatus('Offline — Firebase script failed to load, using local storage only.', true)"></script>
+<script>
+  window.addEventListener("load", ()=>{ initFirebase(); });
+</script>
+</body>
+</html>
